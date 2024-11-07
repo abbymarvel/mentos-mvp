@@ -1,3 +1,5 @@
+import json
+
 from config.logging import Logger
 
 from kafka import KafkaConsumer
@@ -17,6 +19,7 @@ class Consumer:
         self.instance = KafkaConsumer(
             self.KAFKA_TOPIC,
             bootstrap_servers=self.KAFKA_SERVER,
+            value_deserializer=lambda m: json.loads(m.decode('utf-8')),
             api_version=(0,9) # enables full group coordination features with automatic partition assignment and rebalancing,
         )
         return self.instance
