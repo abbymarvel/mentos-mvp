@@ -16,7 +16,7 @@ https://python.langchain.com/docs/tutorials/rag/
 2. Connect to Clickhouse instance & create table (if not present):
    
     ```
-    docker exec -it clickhouse-server clickhouse-client
+    docker exec -it langchain-clickhouse-server clickhouse-client
     ```
 
     ```
