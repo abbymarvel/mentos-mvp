@@ -28,12 +28,8 @@
     pip install -r requirements.txt
     ```
 
-4. As separate processes, run:
+4. At project directory, run:
 
-    ```
-    python main-consumer.py
-    ```
-    and
     ```
     python main-producer.py
     ```
