@@ -3,7 +3,6 @@ import os
 from dotenv import load_dotenv
 
 from broker.producer.instance import Producer
-from broker.consumer.instance import Consumer
 
 
 if __name__ == '__main__':

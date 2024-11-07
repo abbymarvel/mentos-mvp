@@ -1,0 +1,8 @@
+clickhouse-connect
+langchain
+langchain-community
+langchain-core
+langchain-openai
+python-crontab
+python-dotenv
+sentence_transformers
