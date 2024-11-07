@@ -1,0 +1,9 @@
+clickhouse-connect
+kafka-python
+langchain
+langchain-community
+langchain-core
+langchain-huggingface
+langchain-openai
+python-dotenv
+sentence-transformers
