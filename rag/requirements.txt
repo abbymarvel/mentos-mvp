@@ -2,6 +2,7 @@ clickhouse-connect
 langchain
 langchain-community
 langchain-core
+langchain-huggingface
 langchain-openai
 python-crontab
 python-dotenv
