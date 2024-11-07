@@ -72,7 +72,8 @@ class Producer:
 
             while True:
                 for i in range(num_entries):
-                    current_time = (start_time + timedelta(seconds=i * interval_seconds)).strftime("%Y-%m-%d %H:%M:%S")
+                    # current_time = (start_time + timedelta(seconds=i * interval_seconds)).strftime("%Y-%m-%d %H:%M:%S")
+                    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     hour = (start_time + timedelta(seconds=i * interval_seconds)).hour
 
                     temp = temperature(hour)
