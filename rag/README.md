@@ -1,9 +1,4 @@
-https://hub.docker.com/r/clickhouse/clickhouse-server/
-https://python.langchain.com/docs/integrations/vectorstores/clickhouse/
-https://grafana.com/grafana/plugins/grafana-clickhouse-datasource/
-https://clickhouse.com/docs/knowledgebase/vector-search
-https://python.langchain.com/docs/integrations/llms/together/
-https://python.langchain.com/docs/tutorials/rag/
+# Retrieval-Augmented Generation
 
 ## Prerequisites
 
@@ -74,3 +69,17 @@ Create `.env` file with key `ENVIRONMENT`. Set to `DEVELOPMENT` for local, else 
     ```
     python cron.py
     ```
+
+## References
+
+https://hub.docker.com/r/clickhouse/clickhouse-server/
+
+https://python.langchain.com/docs/integrations/vectorstores/clickhouse/
+
+https://grafana.com/grafana/plugins/grafana-clickhouse-datasource/
+
+https://clickhouse.com/docs/knowledgebase/vector-search
+
+https://python.langchain.com/docs/integrations/llms/together/
+
+https://python.langchain.com/docs/tutorials/rag/
