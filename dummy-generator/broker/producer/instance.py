@@ -1,8 +1,9 @@
 import json
 import random
 import time
+import math
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from config.logging import Logger
 
@@ -54,39 +55,63 @@ class Producer:
     
     def produce(self) -> None:
         """
-        Produces 10.000 messages with a delay of 1 second.
+        Produces messages with a delay.
         """
         try:
-            for _ in range(10000):
-                # generate current timestamp
-                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
-                
-                # create sensor data with random values
-                sensor_data = {
-                    "sensor": str(random.randint(1, 4)),  # sensor ID between 1 and 4
-                    "time": current_time,
-                    "temp": str(random.randint(20, 35)),  # temperature between 20 and 35
-                    "hum": str(random.randint(30, 70)),   # humidity between 30 and 70
-                    "gyro": [random.uniform(0, 10), random.uniform(0, 10), random.uniform(0, 150)],
-                    "accel": [random.uniform(0, 5), random.uniform(0, 5), random.uniform(0, 5)]
-                }
-                
-                # inject an outlier with low probability
-                if random.random() < 0.001:  # approximately 1 out of 1000 chance
-                    sensor_data["temp"] = str(random.randint(100, 150))  # outlier temperature
-                    sensor_data["gyro"] = [random.uniform(100, 200), random.uniform(100, 200), random.uniform(100, 200)]
-                    sensor_data["accel"] = [random.uniform(10, 20), random.uniform(10, 20), random.uniform(10, 20)]
-                
-                # send the sensor data to kafka
-                self.instance.send(
-                    self.KAFKA_TOPIC, 
-                    value=sensor_data
-                )
+            num_entries = 2880  # 24 hours with 30-second intervals
+            interval_seconds = 30  # Interval between each entry in seconds
+            start_time = datetime.now() - timedelta(hours=24)
 
-                self.logger.info(f" [*] Sent data to Kafka: {sensor_data}")
-                
-                # wait for a random interval between 0 and 3 seconds before generating the next log
-                time.sleep(random.uniform(0, 3))
+            anomaly_rate = 0.05  # 5% anomaly rate
+
+            def temperature(hour):
+                return 15 + 10 * math.sin((hour / 24) * 2 * math.pi) + random.uniform(-3, 3)
+
+            def humidity(hour):
+                return 55 + 10 * math.cos((hour / 24) * 2 * math.pi) + random.uniform(-5, 5)
+
+            while True:
+                for i in range(num_entries):
+                    current_time = (start_time + timedelta(seconds=i * interval_seconds)).strftime("%Y-%m-%d %H:%M:%S")
+                    hour = (start_time + timedelta(seconds=i * interval_seconds)).hour
+
+                    temp = temperature(hour)
+                    hum = humidity(hour)
+                    
+                    gyro = [round(random.uniform(0, 10), 2) for _ in range(3)]
+                    accel = [round(random.uniform(0, 5), 2) for _ in range(3)]
+
+                    sensor_data = {
+                        "sensor": str(random.randint(1, 4)),
+                        "time": current_time,
+                        "temp": str(round(temp, 2)),
+                        "hum": str(round(hum, 2)),
+                        "gyro": gyro,
+                        "accel": accel
+                    }
+
+                    if random.random() < anomaly_rate:
+                        anomaly_type = random.choice(["temp_spike", "high_gyro", "high_accel", "combo"])
+                        if anomaly_type == "temp_spike":
+                            sensor_data["temp"] = str(round(random.uniform(100, 150), 2))  # Extreme temperature
+                        elif anomaly_type == "high_gyro":
+                            sensor_data["gyro"] = [round(random.uniform(100, 200), 2) for _ in range(3)]  # High gyro
+                        elif anomaly_type == "high_accel":
+                            sensor_data["accel"] = [round(random.uniform(10, 20), 2) for _ in range(3)]  # High accel
+                        elif anomaly_type == "combo":
+                            sensor_data["temp"] = str(round(random.uniform(80, 120), 2))
+                            sensor_data["hum"] = str(round(random.uniform(60, 80), 2))
+                            sensor_data["gyro"] = [round(random.uniform(50, 100), 2) for _ in range(3)]
+
+                    # Send data to Kafka
+                    self.instance.send(
+                        self.KAFKA_TOPIC, 
+                        value=sensor_data
+                    )
+
+                    self.logger.info(f" [*] Sent data to Kafka: {sensor_data}")
+
+                    time.sleep(random.uniform(0, 0.1))
         except:
             self.logger.info(" [*] Stopping data generation.")
         finally:
