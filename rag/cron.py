@@ -1,13 +1,13 @@
 from crontab import CronTab
 
-from config.utils import logging
+from config.logging import Logger
 from config.utils import setup_env, get_env_value
 
 
 def main():
     setup_env()
 
-    logger = logging.get_logger()
+    logger = Logger.setup_logger("rag")
 
     # instantiate cron, automatically run `cron.write()` on exit
     with CronTab(user=True) as cron:
