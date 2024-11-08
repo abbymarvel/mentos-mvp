@@ -112,7 +112,7 @@ class Producer:
 
                     self.logger.info(f" [*] Sent data to Kafka: {sensor_data}")
 
-                    time.sleep(random.uniform(1, 15))
+                    time.sleep(random.uniform(1, 5))
         except:
             self.logger.info(" [*] Stopping data generation.")
         finally:
