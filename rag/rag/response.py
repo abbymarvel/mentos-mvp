@@ -4,6 +4,8 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 
+from config.utils import get_env_value
+
 from rag.query import LLMQuery
 
 
@@ -32,7 +34,7 @@ class LLMResponse:
         response = chain.invoke({
             "top_k": None,
             "question": question,
-            "table_info": self.llm_query.db.get_usable_table_names()
+            "table_info": get_env_value("DB_TABLE")
         })
         return response
        
