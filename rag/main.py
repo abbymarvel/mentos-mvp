@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from langchain.prompts import ChatPromptTemplate
 
 from langchain_community.document_loaders import JSONLoader
@@ -15,11 +17,15 @@ from langchain_core.runnables import RunnableLambda, RunnablePassthrough
 
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
+from config.logging import Logger
 from config.utils import setup_env, get_env_value
 
 from rag.query import LLMQuery
 from rag.response import LLMResponse
+from sql.postgresql import PostgreSQLClient
 
+
+logger = Logger().setup_logger("rag")
 
 setup_env()
 
@@ -138,5 +144,19 @@ question = f'''What is the overall analysis of the data from the last {get_env_v
 Are there any key insights or observabilities? 
 Are there any possible mitigations to perform if there are any issues?'''
 
-# TODO: hit grafana API with response
-print(llm_response.get_response(question))
+
+# save summary to db for grafana dashboard query
+summary = llm_response.get_response(question)
+
+logger.info( f' [*] LLM response: \n{summary}')
+
+timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+sql_client = PostgreSQLClient()
+table = get_env_value('DB_TABLE') 
+
+query = f"""INSERT INTO {table} (summary, time)
+            VALUES('{summary}', '{timestamp}')"""
+
+query_code = sql_client.query(query)
+logger.info(f' [*] Query successful with code {query_code}.')

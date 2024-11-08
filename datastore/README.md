@@ -1,5 +1,5 @@
 # Datastore
-
+~
 ## Prerequisites
 
 Create `.env` file with key `ENVIRONMENT`. Set to `DEVELOPMENT` for local, else `PRODUCTION`. Fill other fields in `.env.dev` for local development.
