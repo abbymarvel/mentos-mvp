@@ -47,6 +47,15 @@ Create `.env` file with key `ENVIRONMENT`. Set to `DEVELOPMENT` for local, else 
     );
     ```
 
+    ```
+    CREATE TABLE sensor_insights (
+        id UUID DEFAULT gen_random_uuid(),  
+        summary VARCHAR,                
+        time TIMESTAMP,                                                            
+        PRIMARY KEY (id)
+    );
+    ```
+
 ## Quickstart
 1. Create virtual environment, activate, and install required packages:
 

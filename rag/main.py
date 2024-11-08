@@ -146,17 +146,27 @@ Are there any possible mitigations to perform if there are any issues?'''
 
 
 # save summary to db for grafana dashboard query
-summary = llm_response.get_response(question)
+# conform to sql escape characters
+summary = llm_response.get_response(question).replace("'", "''")
 
 logger.info( f' [*] LLM response: \n{summary}')
 
 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-sql_client = PostgreSQLClient()
+sql_client = PostgreSQLClient(
+    host=get_env_value("DB_HOST"),
+    port=get_env_value("DB_PORT"),
+    user=get_env_value("DB_USER"),
+    password=get_env_value("DB_PASSWORD"),
+    database=get_env_value("DB_NAME")
+)
 table = get_env_value('DB_TABLE') 
 
-query = f"""INSERT INTO {table} (summary, time)
-            VALUES('{summary}', '{timestamp}')"""
+query = f'''INSERT INTO {table} (summary, time) VALUES(\'{summary}\', \'{timestamp}\')'''
 
-query_code = sql_client.query(query)
+try:
+    query_code = sql_client.query(query)
+except Exception as e:
+    logger.error(f' [x] Query failed: {e}')
+
 logger.info(f' [*] Query successful with code {query_code}.')

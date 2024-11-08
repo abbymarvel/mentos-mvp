@@ -4,18 +4,16 @@ import psycopg2
 from psycopg2 import Error
 from psycopg2.extras import RealDictCursor
 
-from config.utils import get_env_value
-
 
 class PostgreSQLClient:
-    def __init__(self):
+    def __init__(self, host: str, port: str, user: str, password: str, database: str):
         try:
             self.connection = psycopg2.connect(
-                host=get_env_value("DB_HOST"),
-                port=get_env_value("DB_PORT"),
-                user=get_env_value("DB_USER"),
-                password=get_env_value("DB_PASSWORD"),
-                database=get_env_value("DB_NAME")
+                host=host,
+                port=port,
+                user=user,
+                password=password,
+                database=database
             )
 
             # Create a cursor to perform database operations
