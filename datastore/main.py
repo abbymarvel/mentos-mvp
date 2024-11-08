@@ -11,23 +11,13 @@ if __name__ == '__main__':
     KAFKA_BROKER = get_env_value('KAFKA_BROKER')
     KAFKA_TOPIC = get_env_value('KAFKA_TOPIC')
 
-    # CLICKHOUSE_HOST=get_env_value("CLICKHOUSE_HOST")
-    # CLICKHOUSE_PORT=get_env_value("CLICKHOUSE_PORT")
-    # CLICKHOUSE_USERNAME=get_env_value("CLICKHOUSE_USERNAME")
-    # # CLICKHOUSE_PASSWORD=get_env_value("CLICKHOUSE_PASSWORD")
-    # CLICKHOUSE_DATABASE=get_env_value("CLICKHOUSE_DATABASE")
-    # CLICKHOUSE_TABLE=get_env_value("CLICKHOUSE_TABLE")
-
-
-    # clickhouse_client = ClickhouseClient(
-    #     host=CLICKHOUSE_HOST,
-    #     port=CLICKHOUSE_PORT,
-    #     username=CLICKHOUSE_USERNAME,
-    #     database=CLICKHOUSE_DATABASE,
-    #     table=CLICKHOUSE_TABLE
-    # )
-
-    sql_client = PostgreSQLClient()
+    sql_client = PostgreSQLClient(
+        host=get_env_value("DB_HOST"),
+        port=get_env_value("DB_PORT"),
+        user=get_env_value("DB_USER"),
+        password=get_env_value("DB_PASSWORD"),
+        database=get_env_value("DB_NAME")
+    )
 
     consumer = Consumer(
         broker=KAFKA_BROKER, 
